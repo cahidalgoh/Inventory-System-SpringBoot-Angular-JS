@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -77,10 +74,10 @@ public class ProductController {
      * @param productId The ID of the product to retrieve.
      * @return ResponseEntity containing the product details or an error message if not found.
      */
-    @GetMapping("/{productId}") // Endpoint to retrieve a product by its ID -> http://localhost:8080/inventory-api/products/{productId}
+    @GetMapping("/{product-id}") // Endpoint to retrieve a product by its ID -> http://localhost:8080/inventory-api/products/{productId}
     // The productId will be passed as a path variable in the URL
     // Example: http://localhost:8080/inventory-api/products/1
-    public ResponseEntity<?> getProductById(@PathVariable("productId") Integer productId) {
+    public ResponseEntity<?> getProductById(@PathVariable("product-id") Integer productId) {
 
         LOGGER.info("Retrieving product with id: {}", productId);
         // Retrieve a product by its ID
@@ -102,5 +99,14 @@ public class ProductController {
 
     }
 
+    @PostMapping("/add-product")
+    public ResponseEntity<?> addProduct(@RequestBody Product product) {
+
+        LOGGER.info("Adding new product: {}", product);
+        Product productAdded = this.productService.saveOrUpdateProduct(product);
+        // Respond with a created status and the created product
+        return ResponseEntity.status(HttpStatus.CREATED).body(productAdded);
+
+    }
 
 }
