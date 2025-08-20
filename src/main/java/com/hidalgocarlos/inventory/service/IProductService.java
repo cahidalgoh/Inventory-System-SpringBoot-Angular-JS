@@ -24,8 +24,9 @@ public interface IProductService {
     /**
      * Save a new product or update an existing one.
      * @param product The product to save or update.
+     * @return The saved or updated product.
      */
-    void saveOrUpdateProduct(Product product);
+    Product saveOrUpdateProduct(Product product);
 
     /**
      * Delete a product by its ID.
