@@ -20,7 +20,7 @@ public class Product {
 
     @Column(name = "product_name", nullable = false, length = 100)
     @NonNull
-    @Setter(AccessLevel.NONE) // Prevents Lombok from generating a setter for productName
+    //@Setter(AccessLevel.NONE) // Prevents Lombok from generating a setter for productName
     //@Getter(AccessLevel.NONE) // Prevents Lombok from generating a getter for
     private String productName;
 
