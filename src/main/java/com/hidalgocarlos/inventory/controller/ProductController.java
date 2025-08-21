@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/inventory-api/products") // Base URL for product-related endpoints
@@ -107,6 +107,50 @@ public class ProductController {
         // Respond with a created status and the created product
         return ResponseEntity.status(HttpStatus.CREATED).body(productAdded);
 
+    }
+
+    @PutMapping("/edit-product/{product-id}")
+    public ResponseEntity<?> editProduct(
+            @PathVariable("product-id") Integer productId,
+            @RequestBody Product productToEdit) {
+
+        LOGGER.info("Retrieving product with id: {}", productId);
+
+        Product product = this.productService.getProductById(productId);
+
+        product.setProductName(productToEdit.getProductName());
+        product.setDescription(productToEdit.getDescription());
+        product.setPrice(productToEdit.getPrice());
+        product.setStock(productToEdit.getStock());
+
+        productService.saveOrUpdateProduct(product);
+
+        return ResponseEntity.status(HttpStatus.OK).body(product);
+    }
+
+    @DeleteMapping("/delete-product/{product-id}")
+    ResponseEntity<?> deleteProduct(@PathVariable("product-id") Integer productId) {
+        Map<String, Boolean> response = new HashMap<>();
+        Product productToDelete = this.productService.getProductById(productId);
+
+        // Check if the product is null and log accordingly
+        if (productToDelete == null) {
+            LOGGER.warn("Product with id {} not found", productId);
+            // Create an error response object with a message and details
+            // The ErrorResponse class can be used to standardize error responses in your API
+            ErrorResponse errorResponse = new ErrorResponse("Product with id " + productId + " does not exist", HttpStatus.NOT_FOUND.value());
+            // Return a 404 Not Found response with an error message
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse); // Return 404 Not Found with an error message
+
+        }
+
+        LOGGER.info("Product retrieved: {}", productToDelete);
+
+        this.productService.deleteProduct(productToDelete.getProductId());
+
+        response.put("productDeleted", Boolean.TRUE);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
